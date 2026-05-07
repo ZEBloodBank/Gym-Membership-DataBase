@@ -1,6 +1,6 @@
 # Title: Gym Database Entry
 # Contributors: James A. Hall
-# Date of creation: 5/6/2026
+# Date of creation: 05/06/2026
 
 
 # Import connection function for DB
@@ -8,6 +8,7 @@ from psycopg2 import connect
 import getpass
 import pandas as pd 
 import numpy as np
+import sys
 
 
 # Logs admin into database
@@ -27,13 +28,14 @@ def connection():
 def readInData():
 
     # Handles incoming data by reading them from a provided Excel file.
-    # can iterate through worksheets. Rightnow will iterate through worksheets
+    # can iterate through worksheets. Right now will iterate through worksheets
     # though has two checks for data FileNF error, and checking for lack of data.
 
     # Initializes a List of Dictionaries to store the incoming data.
     sheets = {}
 
-    # Tests to see if the File input exists
+    # Tests to see if the File input exists if not Error.
+    # Then grabs the Excel File to iterate through.
     try:
         file = pd.ExcelFile("Gym_Database_Dataset.xlsx")
     except FileNotFoundError:
@@ -47,7 +49,7 @@ def readInData():
         sheets[sheet] =  df
 
 
-    # If there were no sheets IE no data and the try Except fails return -1 in case of failure. 
+    # If there were no sheets IE no data and the try Except fails return -1 in case of Lacking Data. 
     if (len(sheets) < 1):
         return -1
     
@@ -66,9 +68,27 @@ def adminInput():
 
 # Handles the Insertion of the Data into the Database !! NEED TO CHECK AND SEE IF THEY ALREADY EXIST IF THEY DO, DO NOT ADD !!
 def entry():
-    conn = connection()
-    cursor = conn.cursor()
+    
+    try:
+        conn = connection()
+        cursor = conn.cursor()
+    except:
+        print("Error: Verification Failed")
+        exit(-1)
 
+    if (len(sys.argv) < 2):
+        print("Error: Not Enough arguments")
+        exit(1)
+    elif (len(sys.argv) > 4):
+        print("Error: Too many arguments")
+        exit(1)
+    
+    if(sys.argv[1] == "-r"):
+        data = readInData()
+    elif (sys.argv[1] == "-a"):
+        adminInput()
+
+            
     # !! SET UP QUERY LIMITS/CONSTRAIN INCASE OF INJECTION !!
     query = "SELECT * FROM member;"
     cursor.execute(query)
@@ -76,7 +96,7 @@ def entry():
 
     info = cursor.fetchall()
 
-    print(info)
+    print(data)
     
     conn.close()
 
@@ -84,4 +104,4 @@ def entry():
 
 
 
-readInData()
+entry()
