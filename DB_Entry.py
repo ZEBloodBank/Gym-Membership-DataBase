@@ -5,6 +5,7 @@
 
 # Import connection function for DB
 from psycopg2 import connect
+from psycopg2 import sql
 import getpass
 import pandas as pd 
 import numpy as np
@@ -85,10 +86,18 @@ def entry():
     
     if(sys.argv[1] == "-r"):
         data = readInData()
-    elif (sys.argv[1] == "-a"):
-        adminInput()
+        for sheet in data:
+            sql.SQL("INSERT INTO {table} {fields} VALUES ({values})").format(table=sql.Identifier(sheet), )
+        
 
-            
+
+    elif (sys.argv[1] == "-a"):
+        data =  adminInput()
+
+
+
+
+
     # !! SET UP QUERY LIMITS/CONSTRAIN INCASE OF INJECTION !!
     query = "SELECT * FROM member;"
     cursor.execute(query)
@@ -96,7 +105,7 @@ def entry():
 
     info = cursor.fetchall()
 
-    print(data)
+    #print(data)
     
     conn.close()
 
