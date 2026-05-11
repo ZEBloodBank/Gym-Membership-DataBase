@@ -93,10 +93,15 @@ def entry():
         for sheet in data:
             attributes = list(data[sheet])
             currData = list(map(lambda x: tuple(x), np.array(data[sheet])))
-            print(attributes)
-            list(map(lambda x: print(x),currData))
             
+            if sheet.lower() == 'member' or sheet.lower() == 'trainer':
+                names = list(map(lambda x: x[1].split(), currData))
+                temp = list(currData[1])
+                temp[1:2] = names[1]
+                currData[1] = tuple(temp)
+                print(currData[1])
 
+          #"list(map(lambda x: print(x),currData))"
             
 
         end_time = time.perf_counter()
@@ -121,16 +126,13 @@ def entry():
 
 def queryFormat(sheetName):
     
-    if sheetName.lower() == 'member': pass
-    if sheetName.lower() == 'trainer': pass
-    if sheetName.lower() == 'workoutsession': pass
-    if sheetName.lower() == 'membership': pass
-    if sheetName.lower() == 'equipment': pass
+    if sheetName.lower() == 'member': query = "INSERT INTO member (member_id, first_name, last_name, email, plan_id) VALUES (%s, %s, %s, %s, %s)"
+    if sheetName.lower() == 'trainer': query = "INSERT INTO trainer (trainer_id, first_name, last_name, specialty) VALUES (%s, %s, %s, %s)"
+    if sheetName.lower() == 'workoutsession': query = "INSERT INTO workout_session (session_id, date, session_duration, member_id, trainer_id) VALUES (%s, %s, %s, %s, %s)"
+    if sheetName.lower() == 'membership': query = "INSERT INTO membership_plan (plan_id, plan_name, price, plan_duration) VALUES (%s, %s, %s, %s)"
+    if sheetName.lower() == 'equipment': query = "INSERT INTO equipment (equipment_id, equipment_name, type, status) VALUES (%s, %s, %s, %s)"
     
-    
-    
-    query = ""
-    
+
     
     return query
 
