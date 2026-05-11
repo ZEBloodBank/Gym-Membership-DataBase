@@ -10,6 +10,7 @@ import getpass
 import pandas as pd 
 import numpy as np
 import sys
+import time
 
 
 # Logs admin into database
@@ -86,10 +87,19 @@ def entry():
     
     if(sys.argv[1] == "-r"):
         data = readInData()
+        test = list(data)
+        start_time = time.perf_counter()
+    
         for sheet in data:
-            sql.SQL("INSERT INTO {table} {fields} VALUES ({values})").format(table=sql.Identifier(sheet), )
-        
+            attributes = list(data[sheet])
+            currData = list(map(lambda x: tuple(x), np.array(data[sheet])))
+            print(attributes)
+            list(map(lambda x: print(x),currData))
+            
 
+            
+
+        end_time = time.perf_counter()
 
     elif (sys.argv[1] == "-a"):
         data =  adminInput()
@@ -97,7 +107,7 @@ def entry():
 
 
 
-
+    print(f"Elpased time: {end_time - start_time:.4f} seconds")
     # !! SET UP QUERY LIMITS/CONSTRAIN INCASE OF INJECTION !!
     query = "SELECT * FROM member;"
     cursor.execute(query)
@@ -109,7 +119,20 @@ def entry():
     
     conn.close()
 
-
+def queryFormat(sheetName):
+    
+    if sheetName.lower() == 'member': pass
+    if sheetName.lower() == 'trainer': pass
+    if sheetName.lower() == 'workoutsession': pass
+    if sheetName.lower() == 'membership': pass
+    if sheetName.lower() == 'equipment': pass
+    
+    
+    
+    query = ""
+    
+    
+    return query
 
 
 
