@@ -95,12 +95,9 @@ def entry():
             currData = list(map(lambda x: tuple(x), np.array(data[sheet])))
             
             if sheet.lower() == 'member' or sheet.lower() == 'trainer':
-                names = list(map(lambda x: x[1].split(), currData))
-                for i in range(len(currData)):
-                    temp = list(currData[i])
-                    temp[1:2] = names[i]
-                    currData[i] = tuple(temp)
-                    print(currData[i])
+                currData = splitName(currData)
+                print(currData[1])
+               
 
             
 
@@ -123,6 +120,15 @@ def entry():
     #print(data)
     
     conn.close()
+
+
+def splitName(currData):
+    names = list(map(lambda x: x[1].split(), currData))
+    for i in range(len(currData)):
+        temp = list(currData[i])
+        temp[1:2] = names[i]
+        currData[i] = tuple(temp)
+    return currData
 
 def queryFormat(sheetName):
     
