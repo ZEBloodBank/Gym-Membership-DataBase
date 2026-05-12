@@ -96,12 +96,12 @@ def entry():
             
             if sheet.lower() == 'member' or sheet.lower() == 'trainer':
                 names = list(map(lambda x: x[1].split(), currData))
-                temp = list(currData[1])
-                temp[1:2] = names[1]
-                currData[1] = tuple(temp)
-                print(currData[1])
+                for i in range(len(currData)):
+                    temp = list(currData[i])
+                    temp[1:2] = names[i]
+                    currData[i] = tuple(temp)
+                    print(currData[i])
 
-          #"list(map(lambda x: print(x),currData))"
             
 
         end_time = time.perf_counter()
