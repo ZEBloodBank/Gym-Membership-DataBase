@@ -116,14 +116,16 @@ def entry():
 
 
 
-    print(f"Elpased time: {end_time - start_time:.4f} seconds")
+  
     # !! SET UP QUERY LIMITS/CONSTRAIN INCASE OF INJECTION !!
     query = "SELECT * FROM member;"
     cursor.execute(query)
 
-
+    # Fetch all to test data execution
     info = cursor.fetchall()
 
+    # Test run time for program
+    print(f"Elpased time: {end_time - start_time:.4f} seconds")
     print(info)
     conn.close()
 
@@ -160,20 +162,19 @@ def queryFormat(sheetName):
     query = None
 
     if sheetName.lower() == 'member': 
-        query = "INSERT INTO member (member_id, first_name, last_name, email, plan_id) VALUES (%s, %s, %s, %s, %s)"
+        query = "INSERT INTO member (member_id, first_name, last_name, email, plan_id) VALUES (%s, %s, %s, %s, %s);"
     if sheetName.lower() == 'trainer': 
-        query = "INSERT INTO trainer (trainer_id, first_name, last_name, specialty) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO trainer (trainer_id, first_name, last_name, specialty) VALUES (%s, %s, %s, %s);"
     if sheetName.lower() == 'workoutsession': 
-        query = "INSERT INTO workout_session (session_id, date, session_duration, member_id, trainer_id) VALUES (%s, %s, %s, %s, %s)"
+        query = "INSERT INTO workout_session (session_id, date, session_duration, member_id, trainer_id) VALUES (%s, %s, %s, %s, %s);"
     if sheetName.lower() == 'membershipplan': 
-        query = "INSERT INTO membership_plan (plan_id, plan_name, price, plan_duration) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO membership_plan (plan_id, plan_name, price, plan_duration) VALUES (%s, %s, %s, %s);"
     if sheetName.lower() == 'equipment': 
-        query = "INSERT INTO equipment (equipment_id, equipment_name, type, status) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO equipment (equipment_id, equipment_name, type, status) VALUES (%s, %s, %s, %s);"
     if sheetName.lower() == 'class':
-        query = "INSERT INTO class (class_id, class_name, schedule_time, trainer_id) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO class (class_id, class_name, schedule_time, trainer_id) VALUES (%s, %s, %s, %s);"
 
     return query
-
 
 
 entry()
