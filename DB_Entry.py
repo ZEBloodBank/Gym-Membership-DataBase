@@ -63,7 +63,7 @@ def adminInput():
     # Create a INPUT system that allows and prints
     # prompts for an Admin to add individual data
     # to provided table via the Admin. Again data
-    # should be authenticated in the DB. 
+    # should be authenticated in the DB.
     
     return -1
 
@@ -71,6 +71,7 @@ def adminInput():
 # Handles the Insertion of the Data into the Database !! NEED TO CHECK AND SEE IF THEY ALREADY EXIST IF THEY DO, DO NOT ADD !!
 def entry():
     
+
     try:
         conn = connection()
         cursor = conn.cursor()
@@ -84,12 +85,11 @@ def entry():
     elif (len(sys.argv) > 4):
         print("Error: Too many arguments")
         exit(1)
-    
+
     # File input, when called with a "-r" in the command Line it will run through a file
     # given via the command line (WIP)
     if(sys.argv[1] == "-r"):
         data = readInData()
-        test = list(data)
         start_time = time.perf_counter()
     
         # Iterates through each sheet grabbing the data and turing it into tuples
@@ -105,7 +105,7 @@ def entry():
 
             # Gets the Correct query str to be executed by psycopg2
             query = queryFormat(sheetName=sheet)
-            print(query)
+            #print(query)
             
             cursor.executemany(query, currData)
         end_time = time.perf_counter()
@@ -146,6 +146,7 @@ def splitName(currData):
         temp = list(currData[i])
         temp[1:2] = names[i]
         currData[i] = tuple(temp)
+    
     return currData
 
 def queryFormat(sheetName):
