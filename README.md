@@ -4,12 +4,12 @@ A rough blue-print into a bare-bones Gym DB with two python programs.
 EXCLAIMER -- THIS IS NOT A REAL DATABASE NOR IS IT A TESTER 
 
 ## Schema
-member(member_id, first_name, last_name, plan_id)
-email(member_id, email) -- Multivariate attribute of the Member entity
-membership_plan(plan_id, plan_name, price, plan_duration)
-equipment(equipment_id, equipment_name, type, status)
-workout_session(session_id, date, session_duration, member_id, trainer_id)
-trainer(trainer_id, first_name, last_name, specialty)
+- member(member_id, first_name, last_name, plan_id)
+- email(member_id, email) -- Multivariate attribute of the Member entity
+- membership_plan(plan_id, plan_name, price, plan_duration)
+- equipment(equipment_id, equipment_name, type, status)
+- workout_session(session_id, date, session_duration, member_id, trainer_id)
+- trainer(trainer_id, first_name, last_name, specialty)
 
 ## Required Imports
 - psycopg2
