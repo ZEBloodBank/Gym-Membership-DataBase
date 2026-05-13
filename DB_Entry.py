@@ -85,22 +85,29 @@ def entry():
         print("Error: Too many arguments")
         exit(1)
     
+    # File input, when called with a "-r" in the command Line it will run through a file
+    # given via the command line (WIP)
     if(sys.argv[1] == "-r"):
         data = readInData()
         test = list(data)
         start_time = time.perf_counter()
     
+        # Iterates through each sheet grabbing the data and turing it into tuples
+        # to be read into the database in largescale
         for sheet in data:
             attributes = list(data[sheet])
             currData = list(map(lambda x: tuple(x), np.array(data[sheet])))
             
+            # The known sheets with Names are processed to split and format
+            # them for INSERT into the DB
             if sheet.lower() == 'member' or sheet.lower() == 'trainer':
                 currData = splitName(currData)
-                print(currData[1])
-               
 
+            # Gets the Correct query str to be executed by psycopg2
+            query = queryFormat(sheetName=sheet)
+            print(query)
             
-
+            cursor.executemany(query, currData)
         end_time = time.perf_counter()
 
     elif (sys.argv[1] == "-a"):
@@ -117,13 +124,22 @@ def entry():
 
     info = cursor.fetchall()
 
-    #print(data)
-    
+    print(info)
     conn.close()
 
 
 def splitName(currData):
+    '''
+    Helper Function used to split the names of the incoming data,
+    then turning them back to tuples and returning the altered data.
+    Preparing the data for the INSERT command.
+    '''
+
     names = list(map(lambda x: x[1].split(), currData))
+    
+    # Iterates through each of the already created tuples
+    # and slices them to replace the data with the new
+    # split names which, then turned back into a tuple. 
     for i in range(len(currData)):
         temp = list(currData[i])
         temp[1:2] = names[i]
@@ -131,15 +147,31 @@ def splitName(currData):
     return currData
 
 def queryFormat(sheetName):
+    '''
+    Determins the correct Query str depending on the current sheet
+    in the excel file. Returning the query str formatted to the current state
+    of the DB. 
+    '''
+    # Check to make sure that there is a sheet to search through
+    if sheetName == None:
+        print("Err: No sheet given")
+        exit(-1)
     
-    if sheetName.lower() == 'member': query = "INSERT INTO member (member_id, first_name, last_name, email, plan_id) VALUES (%s, %s, %s, %s, %s)"
-    if sheetName.lower() == 'trainer': query = "INSERT INTO trainer (trainer_id, first_name, last_name, specialty) VALUES (%s, %s, %s, %s)"
-    if sheetName.lower() == 'workoutsession': query = "INSERT INTO workout_session (session_id, date, session_duration, member_id, trainer_id) VALUES (%s, %s, %s, %s, %s)"
-    if sheetName.lower() == 'membership': query = "INSERT INTO membership_plan (plan_id, plan_name, price, plan_duration) VALUES (%s, %s, %s, %s)"
-    if sheetName.lower() == 'equipment': query = "INSERT INTO equipment (equipment_id, equipment_name, type, status) VALUES (%s, %s, %s, %s)"
-    
+    query = None
 
-    
+    if sheetName.lower() == 'member': 
+        query = "INSERT INTO member (member_id, first_name, last_name, email, plan_id) VALUES (%s, %s, %s, %s, %s)"
+    if sheetName.lower() == 'trainer': 
+        query = "INSERT INTO trainer (trainer_id, first_name, last_name, specialty) VALUES (%s, %s, %s, %s)"
+    if sheetName.lower() == 'workoutsession': 
+        query = "INSERT INTO workout_session (session_id, date, session_duration, member_id, trainer_id) VALUES (%s, %s, %s, %s, %s)"
+    if sheetName.lower() == 'membershipplan': 
+        query = "INSERT INTO membership_plan (plan_id, plan_name, price, plan_duration) VALUES (%s, %s, %s, %s)"
+    if sheetName.lower() == 'equipment': 
+        query = "INSERT INTO equipment (equipment_id, equipment_name, type, status) VALUES (%s, %s, %s, %s)"
+    if sheetName.lower() == 'class':
+        query = "INSERT INTO class (class_id, class_name, schedule_time, trainer_id) VALUES (%s, %s, %s, %s)"
+
     return query
 
 
