@@ -58,13 +58,37 @@ def readInData():
     file.close()
     return sheets
 
-def adminInput():
+def adminInput(cursor, conn):
     
     # Create a INPUT system that allows and prints
     # prompts for an Admin to add individual data
     # to provided table via the Admin. Again data
     # should be authenticated in the DB.
     
+    done = False
+    qeury = ""
+    values = ()
+    while not done:
+        
+        userInput = input("What table would you like to Insert Data: ")
+        if userInput == "":
+            done = True
+            return 1
+
+        query = queryFormat(userInput)
+        
+        if(query == None):
+            print("Err: Not a valid Table/Did not match Sheet name!")
+            exit(-1)
+        
+        values = adminQueryFormat(userInput)
+
+        try:
+            cursor.execute(query, values)
+        except:
+            print("Err: Invalid attribute data Length or Type")
+            return -1
+
     return -1
 
 
@@ -86,11 +110,12 @@ def entry():
         print("Error: Too many arguments")
         exit(1)
 
+    start_time = time.perf_counter()
     # File input, when called with a "-r" in the command Line it will run through a file
     # given via the command line (WIP)
     if(sys.argv[1] == "-r"):
         data = readInData()
-        start_time = time.perf_counter()
+       
     
         # Iterates through each sheet grabbing the data and turing it into tuples
         # to be read into the database in largescale
@@ -105,18 +130,18 @@ def entry():
 
             # Gets the Correct query str to be executed by psycopg2
             query = queryFormat(sheetName=sheet)
-            #print(query)
             
             cursor.executemany(query, currData)
-        end_time = time.perf_counter()
+        
 
     elif (sys.argv[1] == "-a"):
-        data =  adminInput()
+        data =  adminInput(cursor=cursor, conn=conn)
+        print(data)
 
 
 
 
-  
+    end_time = time.perf_counter()
     # !! SET UP QUERY LIMITS/CONSTRAIN INCASE OF INJECTION !!
     query = "SELECT * FROM member;"
     cursor.execute(query)
@@ -148,6 +173,32 @@ def splitName(currData):
         currData[i] = tuple(temp)
     
     return currData
+
+
+def adminQueryFormat(tableName):
+    
+    temp = []
+
+    print("Seperate Values by a (,)")
+    if tableName.lower() == 'member': 
+        temp = input("Give Member Id, Full Name, Email, and Plan Id: ").split(",")
+        temp[1:2] = temp[1].split()
+    elif tableName.lower() == 'membershipplan': 
+        temp = input("Give Plan Id, Plan Name, Price, Plan Duration: ").split(",")
+    elif tableName.lower() == 'trainer': 
+        temp = input("Give Trainer Id, Trainer Full Name, and Specialty: ").split(",")
+        temp[1:2] = temp[1].split()
+    elif tableName.lower() == 'class': 
+        temp = input("Give Class Id, Class Name, Schedule Time, Trainer Id: ").split(",")
+    elif tableName.lower() == 'workoutsession': 
+        temp = input("Give Session Id, date, Session duration, Member Id, Trainer Id: ").split(",")
+    elif tableName.lower() == 'equipment': 
+        temp = input("Give Equipment Id, Equipment Name, Type, Status: ").split(",")
+    else:
+        return None
+    
+    
+    return tuple(temp)
 
 def queryFormat(sheetName):
     '''
