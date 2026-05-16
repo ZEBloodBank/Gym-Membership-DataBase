@@ -31,4 +31,8 @@ inserstion or DB managment.
 This program is intended to take a formatted Excel file and read it into
 the database, while also handling Name Splitting the Member and Trainer files
 given that in the database it is required that the names is split into First and Last
-as practice
+as practice. Handling Large scale Excel files at a medium to slow pace. 
+
+## TIME_UPDATE
+This program allows for an admin to go in and change the time/date at which a Class or Workoutsession will happen.
+It is a very simple program that gives simple access using UPDATE's to alter the data within the database.
