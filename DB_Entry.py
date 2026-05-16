@@ -5,7 +5,6 @@
 
 # Import connection function for DB
 from psycopg2 import connect
-from psycopg2 import sql
 import getpass
 import pandas as pd 
 import numpy as np
@@ -83,11 +82,8 @@ def adminInput(cursor, conn):
         
         values = adminQueryFormat(userInput)
 
-        try:
-            cursor.execute(query, values)
-        except:
-            print("Err: Invalid attribute data Length or Type")
-            return -1
+ 
+        cursor.execute(query, values)
 
     return -1
 
@@ -132,6 +128,7 @@ def entry():
             query = queryFormat(sheetName=sheet)
             
             cursor.executemany(query, currData)
+            conn.commit()
         
 
     elif (sys.argv[1] == "-a"):
@@ -214,17 +211,17 @@ def queryFormat(sheetName):
     query = None
 
     if sheetName.lower() == 'member': 
-        query = "INSERT INTO member (member_id, first_name, last_name, email, plan_id) VALUES (%s, %s, %s, %s, %s);"
+        query = "INSERT INTO member (member_id, first_name, last_name, email, plan_id) VALUES (%s, %s, %s, %s, %s) ON CONFLICT (member_id) DO NOTHING;"
     if sheetName.lower() == 'trainer': 
-        query = "INSERT INTO trainer (trainer_id, first_name, last_name, specialty) VALUES (%s, %s, %s, %s);"
+        query = "INSERT INTO trainer (trainer_id, first_name, last_name, specialty) VALUES (%s, %s, %s, %s) ON CONFLICT (trainer_id) DO NOTHING;"
     if sheetName.lower() == 'workoutsession': 
-        query = "INSERT INTO workout_session (session_id, date, session_duration, member_id, trainer_id) VALUES (%s, %s, %s, %s, %s);"
+        query = "INSERT INTO workout_session (session_id, date, session_duration, member_id, trainer_id) VALUES (%s, %s, %s, %s, %s) ON CONFLICT (session_id) DO NOTHING;"
     if sheetName.lower() == 'membershipplan': 
-        query = "INSERT INTO membership_plan (plan_id, plan_name, price, plan_duration) VALUES (%s, %s, %s, %s);"
+        query = "INSERT INTO membership_plan (plan_id, plan_name, price, plan_duration) VALUES (%s, %s, %s, %s) ON CONFLICT (plan_id) DO NOTHING;"
     if sheetName.lower() == 'equipment': 
-        query = "INSERT INTO equipment (equipment_id, equipment_name, type, status) VALUES (%s, %s, %s, %s);"
+        query = "INSERT INTO equipment (equipment_id, equipment_name, type, status) VALUES (%s, %s, %s, %s) ON CONFLICT (equipment_id) DO NOTHING;"
     if sheetName.lower() == 'class':
-        query = "INSERT INTO class (class_id, class_name, schedule_time, trainer_id) VALUES (%s, %s, %s, %s);"
+        query = "INSERT INTO class (class_id, class_name, schedule_time, trainer_id) VALUES (%s, %s, %s, %s) ON CONFLICT (class_id) DO NOTHING;"
 
     return query
 
